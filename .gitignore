@@ -1,0 +1,9 @@
+# Node Modules y pnpm-lock.yaml
+
+api/node_modules
+api/pnpm-lock.yaml
+web/web-tienda/pnpm-lock.yaml
+
+# .env
+
+api/.env
