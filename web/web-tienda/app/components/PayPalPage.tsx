@@ -1,8 +1,8 @@
 "use client"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../components/Card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/components/Card';
 import { Plus } from 'lucide-react';
-import { Button } from '../components/Button';
+import { Button } from '@/app/components/Button';
 import Link from 'next/link';
 
 export default function PayPalPage({ clientId } : Props) {

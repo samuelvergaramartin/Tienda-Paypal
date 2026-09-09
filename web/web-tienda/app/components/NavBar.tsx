@@ -1,4 +1,4 @@
-import { Button } from "./Button"
+import { Button } from "@/app/components/Button"
 import { ShoppingBasket } from "lucide-react";
 
 export default function NavBar() {
