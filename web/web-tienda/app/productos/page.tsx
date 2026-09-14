@@ -1,6 +1,6 @@
 "use client"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/components/Card';
-import { Plus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/app/components/Button';
 import NavBar from '../components/NavBar';
 import { useState, useEffect } from 'react';
@@ -75,6 +75,36 @@ export default function ProductsPage() {
                                                                 <Plus />
                                                                 Añadir al carrito
                                                             </Button>
+                                                            {productsInCart.find((p)=> p.productName == product.name) && (
+                                                                <>
+                                                                    <Button 
+                                                                        onClick={()=> {
+                                                                            const productInCart = productsInCart.find((p)=> p.productName == product.name);
+                                                                            let tempProducts = [...productsInCart];
+                                                                            const index = tempProducts.indexOf(productInCart!);
+                                                                            if(tempProducts[index].quantity === 1) {
+                                                                                const temp = [];
+                                                                                for(let i = 0; i < index; i++) {
+                                                                                    temp.push(tempProducts[i]);
+                                                                                }
+                                                                                for(let i = index+1; i < tempProducts.length; i++) {
+                                                                                    temp.push(tempProducts[i]);
+                                                                                }
+                                                                                return setProductsInCart(temp);
+                                                                            }
+                                                                            tempProducts[index] = {
+                                                                                productName: product.name,
+                                                                                quantity: --productInCart!.quantity
+                                                                            };
+
+                                                                            setProductsInCart(tempProducts);
+                                                                        }}
+                                                                        className="cursor-pointer bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium shadow-lg shadow-red-500/25"
+                                                                    >
+                                                                        <Minus />
+                                                                    </Button>
+                                                                </>
+                                                            )}
                                                         <p className="text-white font-bold">{product.price} €</p>
                                                     </div>
                                                 </CardFooter>
@@ -93,5 +123,5 @@ export default function ProductsPage() {
 
 type ProductInCart = {
     productName: string,
-    quantity: number
+    quantity: number,
 }
