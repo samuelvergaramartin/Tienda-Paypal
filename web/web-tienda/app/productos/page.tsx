@@ -2,7 +2,7 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/components/Card';
 import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/app/components/Button';
-import NavBar from '../components/NavBar';
+import NavBar from '@/app/components/NavBar';
 import { useState, useEffect } from 'react';
 
 export default function ProductsPage() {
@@ -29,13 +29,27 @@ export default function ProductsPage() {
         },
         
     ];
-    const [productsInCart, setProductsInCart] = useState<ProductInCart[]>([]);
+    const [productsInCart, setProductsInCart] = useState<ProductInCart[] | undefined>();
+    const [first, setFirst] = useState<boolean>(true);
     useEffect(()=> {
-        console.log("Productos en el carrito: ", productsInCart);
-    }, [productsInCart]);
+        if(sessionStorage.getItem("carrito")) {
+            console.log("DEBUG:", sessionStorage.getItem("carrito"));
+            setProductsInCart(JSON.parse(sessionStorage.getItem("carrito")!))
+        }
+        else sessionStorage.setItem("carrito", JSON.stringify([]));
+
+        setFirst(false);
+    }, []);
+    useEffect(()=> {
+        console.log("Entro aqui antes...")
+        if(!first) {
+            sessionStorage.setItem("carrito", JSON.stringify(productsInCart));
+            console.log("Guardado en el storage: ", sessionStorage.getItem("carrito"));
+        }
+    }, [first, productsInCart]);
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 text-white">
-            <NavBar products={productsInCart}/>
+            <NavBar products={productsInCart || []}/>
             <div className="flex">
                 <main className="flex-1 p-6 md:p-8">
                     <div className="space-y-6">
@@ -55,19 +69,21 @@ export default function ProductsPage() {
                                                     <div className="flex gap-3 mt-auto items-center justify-center pb-5">
                                                         <Button
                                                             onClick={() => {
-                                                                const productInCart = productsInCart.find((p)=> p.productName == product.name);
+                                                                const productInCart = productsInCart!.find((p)=> p.productName == product.name);
                                                                 if(productInCart) {
-                                                                    const tempProducts = [...productsInCart];
-                                                                    const index = productsInCart.indexOf(productInCart);
+                                                                    const tempProducts = [...productsInCart!];
+                                                                    const index = productsInCart!.indexOf(productInCart);
                                                                     tempProducts[index] = {
                                                                         productName: product.name,
-                                                                        quantity: ++productInCart.quantity
+                                                                        quantity: ++productInCart.quantity,
+                                                                        price: product.price
                                                                     };
                                                                     setProductsInCart(tempProducts);
                                                                 }
-                                                                else setProductsInCart([...productsInCart, {
+                                                                else setProductsInCart([...productsInCart!, {
                                                                     productName: product.name,
-                                                                    quantity: 1
+                                                                    quantity: 1,
+                                                                    price: product.price
                                                                 }]);
                                                             }}
                                                             className="cursor-pointer bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium shadow-lg shadow-green-500/25"
@@ -75,7 +91,7 @@ export default function ProductsPage() {
                                                                 <Plus />
                                                                 Añadir al carrito
                                                             </Button>
-                                                            {productsInCart.find((p)=> p.productName == product.name) && (
+                                                            {productsInCart?.find((p)=> p.productName == product.name) && (
                                                                 <>
                                                                     <Button 
                                                                         onClick={()=> {
@@ -94,7 +110,8 @@ export default function ProductsPage() {
                                                                             }
                                                                             tempProducts[index] = {
                                                                                 productName: product.name,
-                                                                                quantity: --productInCart!.quantity
+                                                                                quantity: --productInCart!.quantity,
+                                                                                price: productInCart!.price
                                                                             };
 
                                                                             setProductsInCart(tempProducts);
@@ -124,4 +141,5 @@ export default function ProductsPage() {
 type ProductInCart = {
     productName: string,
     quantity: number,
+    price: number
 }
