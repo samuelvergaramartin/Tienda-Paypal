@@ -21,14 +21,14 @@ const environment = new SandboxEnvironment(
 const client = new PayPalHttpClient(environment);
 
 // --- Crear un order ---
-const createOrder = async () => {
+const createOrder = async (price) => {
   const request = new OrdersCreateRequest();
   request.requestBody({
     intent: 'CAPTURE',
     purchase_units: [{
       amount: {
-        currency_code: 'USD',
-        value: '100.00'
+        currency_code: 'EUR',
+        value: String(price)
       }
     }]
   });
@@ -52,9 +52,12 @@ server.get("/", (req, res)=> {
 });
 
 server.post("/api/create-order", async(req, res)=> {
-    const orderId = await createOrder();
-
-    res.status(200).json({orderId: orderId});
+    
+    if(!req.body.price) res.status(500).json({result: "Price must be in the body request."});
+    else {
+      const orderId = await createOrder(req.body.price);
+      res.status(200).json({orderId: orderId});
+    }
 });
 
 server.post("/api/capture-order/:orderId", (req, res)=> {
