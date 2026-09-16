@@ -5,6 +5,7 @@ import NavBar from '@/app/components/NavBar';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/components/Card';
 import { Button } from "@/app/components/Button";
 import { Minus, Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function CarritoPage() {
     const [cart, setCart] = useState<ProductInCart[] | undefined>();
@@ -37,6 +38,9 @@ export default function CarritoPage() {
             }
         }
     }, [first, cart]);
+    useEffect(()=> {
+        sessionStorage.setItem("total", String(total));
+    }, [total]);
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 text-white">
             <NavBar inCartPage={true}/>
@@ -128,12 +132,14 @@ export default function CarritoPage() {
                                     </span>
                                 </h2>
                                 
-                                <div className="flex w-full justify-center mt-5"> 
-                                    <Button
-                                        className="cursor-pointer bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-medium shadow-lg shadow-yellow-500/25 size-20 w-42 text-2xl"
-                                    >
-                                        Comprar
-                                    </Button>
+                                <div className="flex w-full justify-center mt-5">
+                                    <Link href={"/carrito/paypal"}>
+                                        <Button
+                                            className="cursor-pointer bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-medium shadow-lg shadow-yellow-500/25 size-20 w-42 text-2xl"
+                                        >
+                                            Comprar
+                                        </Button>
+                                    </Link>
                                 </div>  
                             </>
                         )}
